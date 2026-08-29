@@ -34,6 +34,11 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+tasks.named('bootRun') {
+	jvmArgs '-Duser.timezone=UTC'
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
+	systemProperty 'user.timezone', 'UTC'
 }

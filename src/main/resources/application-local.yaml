@@ -1,9 +1,6 @@
 server:
   port: 8081
-
 spring:
-  profiles:
-    active: local
   datasource:
     url: jdbc:postgresql://localhost:15432/currency_alert_db?options=-c%20TimeZone=UTC
     username: cas_user
