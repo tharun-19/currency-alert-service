@@ -21,3 +21,7 @@ spring:
       port: 6379
   kafka:
     bootstrap-servers: localhost:9092
+
+jwt:
+  secret: change-me-this-is-a-test-secret-key-for-local-dev
+  expiration-ms: 3600000

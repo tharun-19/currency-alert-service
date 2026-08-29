@@ -1,0 +1,128 @@
+{
+  "info": {
+    "name": "Currency Alert Service - JWT Auth",
+    "description": "Tests the hardcoded JWT authentication flow for the currency alert service.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Login Success",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"test\",\n  \"password\": \"test123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Auth - Login Failure",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"test\",\n  \"password\": \"wrong-password\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Protected - Alerts (Requires JWT)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/alerts",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "alerts"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Protected - Rates (Requires JWT)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/rates",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "rates"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "jwt_token",
+      "value": "PASTE_JWT_HERE",
+      "type": "string"
+    }
+  ]
+}
