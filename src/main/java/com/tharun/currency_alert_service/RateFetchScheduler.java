@@ -37,7 +37,7 @@ public class RateFetchScheduler {
 
         Set<String> currencyPairs = new LinkedHashSet<>();
         for (AlertRule rule : alertRuleRepository.findByStatus("ACTIVE")) {
-            String pair = rule.getBaseCurrency().toUpperCase() + "/" + rule.getTargetCurrency().toUpperCase();
+            String pair = rule.getCurrencyPair().toUpperCase();
             currencyPairs.add(pair);
         }
 

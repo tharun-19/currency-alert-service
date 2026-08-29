@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Currency Alert Service - JWT Auth",
-    "description": "Tests the hardcoded JWT authentication flow for the currency alert service.",
+    "description": "Complete flow: Login → Create Alert → List Alerts → Get Rates (cached or fresh). All protected endpoints use JWT token captured from login.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -86,7 +86,59 @@
       "response": []
     },
     {
-      "name": "Protected - Alerts (Requires JWT)",
+      "name": "Protected - Create Alert (Requires JWT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const responseJson = pm.response.json();",
+              "if (responseJson && responseJson.id) {",
+              "  pm.collectionVariables.set(\"alert_id\", responseJson.id);",
+              "  console.log(\"Alert ID saved to collection variable: \", responseJson.id);",
+              "}",
+              "pm.test(\"Status code is 201 (Created)\", function () {",
+              "  pm.response.to.have.status(201);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currencyPair\": \"USD/INR\",\n  \"direction\": \"ABOVE\",\n  \"threshold\": 90.00\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/alerts",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "alerts"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Protected - List Alerts (Requires JWT)",
       "request": {
         "method": "GET",
         "header": [
@@ -148,7 +200,7 @@
       "response": []
     },
     {
-      "name": "Protected - Rates Test Fetch (Requires JWT)",
+      "name": "Protected - Rates Fresh Fetch (Bypass Cache - Requires JWT)",
       "request": {
         "method": "GET",
         "header": [
@@ -159,7 +211,7 @@
           }
         ],
         "url": {
-          "raw": "http://localhost:8081/api/rates/test?base=USD&target=INR",
+          "raw": "http://localhost:8081/api/rates?base=USD&target=INR&fresh=true",
           "protocol": "http",
           "host": [
             "localhost"
@@ -167,8 +219,7 @@
           "port": "8081",
           "path": [
             "api",
-            "rates",
-            "test"
+            "rates"
           ],
           "query": [
             {
@@ -178,6 +229,10 @@
             {
               "key": "target",
               "value": "INR"
+            },
+            {
+              "key": "fresh",
+              "value": "true"
             }
           ]
         }
@@ -188,6 +243,11 @@
   "variable": [
     {
       "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "alert_id",
       "value": "",
       "type": "string"
     }

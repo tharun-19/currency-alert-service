@@ -4,8 +4,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -25,9 +27,17 @@ class ProtectedEndpointTest {
             public RateResult getRateDetails(String baseCurrency, String targetCurrency) {
                 return new RateResult(new BigDecimal("83.50"), "mock");
             }
+
+            @Override
+            public RateResult getRateDetails(String baseCurrency, String targetCurrency, boolean fresh) {
+                return new RateResult(new BigDecimal("83.50"), "mock");
+            }
         };
 
-        mockMvc = MockMvcBuilders.standaloneSetup(new RateController(rateFetchService), new AlertController()).build();
+        AlertRuleRepository alertRuleRepository = Mockito.mock(AlertRuleRepository.class);
+        Mockito.when(alertRuleRepository.findByStatus("ACTIVE")).thenReturn(Collections.emptyList());
+
+        mockMvc = MockMvcBuilders.standaloneSetup(new RateController(rateFetchService), new AlertController(alertRuleRepository)).build();
     }
 
     @Test

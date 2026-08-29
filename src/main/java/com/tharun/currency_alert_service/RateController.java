@@ -25,10 +25,11 @@ public class RateController {
     @GetMapping("/rates")
     public ResponseEntity<Map<String, Object>> getRates(
             @RequestParam(defaultValue = "USD") String base,
-            @RequestParam(defaultValue = "INR") String target) {
+            @RequestParam(defaultValue = "INR") String target,
+            @RequestParam(defaultValue = "false") boolean fresh) {
 
-        log.info("GET /api/rates called base={} target={}", base, target);
-        RateFetchService.RateResult result = rateFetchService.getRateDetails(base, target);
+        log.info("GET /api/rates called base={} target={} fresh={}", base, target, fresh);
+        RateFetchService.RateResult result = rateFetchService.getRateDetails(base, target, fresh);
 
         Map<String, Object> response = Map.of(
                 "base", base.toUpperCase(),
@@ -38,26 +39,6 @@ public class RateController {
         );
 
         log.info("GET /api/rates response={}", response);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/rates/test")
-    public ResponseEntity<Map<String, Object>> testRateFetch(
-            @RequestParam(defaultValue = "USD") String base,
-            @RequestParam(defaultValue = "INR") String target) {
-
-        log.info("GET /api/rates/test called base={} target={}", base, target);
-        RateFetchService.RateResult result = rateFetchService.getRateDetails(base, target);
-
-        Map<String, Object> response = Map.of(
-                "base", base.toUpperCase(),
-                "target", target.toUpperCase(),
-                "rate", result.rate(),
-                "source", result.source(),
-                "source_detail", "redis_cache_or_exchange_rate_api"
-        );
-
-        log.info("GET /api/rates/test response={}", response);
         return ResponseEntity.ok(response);
     }
 }

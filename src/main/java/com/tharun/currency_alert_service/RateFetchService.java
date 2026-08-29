@@ -40,9 +40,13 @@ public class RateFetchService {
     }
 
     public RateResult getRateDetails(String baseCurrency, String targetCurrency) {
+        return getRateDetails(baseCurrency, targetCurrency, false);
+    }
+
+    public RateResult getRateDetails(String baseCurrency, String targetCurrency, boolean fresh) {
         String key = "rate:" + baseCurrency.toUpperCase() + ":" + targetCurrency.toUpperCase();
 
-        if (redisTemplate != null) {
+        if (!fresh && redisTemplate != null) {
             String cachedValue = redisTemplate.opsForValue().get(key);
             if (cachedValue != null) {
                 BigDecimal cachedRate = new BigDecimal(cachedValue);
@@ -51,7 +55,12 @@ public class RateFetchService {
             }
         }
 
-        log.info("Redis cache miss for key={}, fetching from exchangerate-api", key);
+        if (fresh) {
+            log.info("Fresh fetch requested for key={}, bypassing cache", key);
+        } else {
+            log.info("Redis cache miss for key={}, fetching from exchangerate-api", key);
+        }
+
         BigDecimal fetchedRate = fetchFromApi(baseCurrency, targetCurrency);
 
         if (redisTemplate != null) {
