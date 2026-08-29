@@ -3,6 +3,7 @@ package com.tharun.currency_alert_service;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,7 +15,19 @@ class ProtectedEndpointTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new RateController(), new AlertController()).build();
+        RateFetchService rateFetchService = new RateFetchService(null, new ExchangeRateProperties(), null) {
+            @Override
+            public BigDecimal getRate(String baseCurrency, String targetCurrency) {
+                return new BigDecimal("83.50");
+            }
+
+            @Override
+            public RateResult getRateDetails(String baseCurrency, String targetCurrency) {
+                return new RateResult(new BigDecimal("83.50"), "mock");
+            }
+        };
+
+        mockMvc = MockMvcBuilders.standaloneSetup(new RateController(rateFetchService), new AlertController()).build();
     }
 
     @Test

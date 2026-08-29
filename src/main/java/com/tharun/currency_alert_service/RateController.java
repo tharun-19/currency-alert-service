@@ -1,11 +1,13 @@
 package com.tharun.currency_alert_service;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -14,19 +16,48 @@ public class RateController {
 
     private static final Logger log = LoggerFactory.getLogger(RateController.class);
 
+    private final RateFetchService rateFetchService;
+
+    public RateController(RateFetchService rateFetchService) {
+        this.rateFetchService = rateFetchService;
+    }
+
     @GetMapping("/rates")
-    public ResponseEntity<Map<String, Object>> getRates() {
-        log.info("GET /api/rates called");
-        Map<String, Object> rates = Map.of(
-                "base", "USD",
-                "rates", Map.of(
-                        "EUR", 0.92,
-                        "GBP", 0.78,
-                        "JPY", 157.2
-                )
+    public ResponseEntity<Map<String, Object>> getRates(
+            @RequestParam(defaultValue = "USD") String base,
+            @RequestParam(defaultValue = "INR") String target) {
+
+        log.info("GET /api/rates called base={} target={}", base, target);
+        RateFetchService.RateResult result = rateFetchService.getRateDetails(base, target);
+
+        Map<String, Object> response = Map.of(
+                "base", base.toUpperCase(),
+                "target", target.toUpperCase(),
+                "rate", result.rate(),
+                "source", result.source()
         );
 
-        log.info("GET /api/rates responseKeys={}", rates.keySet());
-        return ResponseEntity.ok(rates);
+        log.info("GET /api/rates response={}", response);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/rates/test")
+    public ResponseEntity<Map<String, Object>> testRateFetch(
+            @RequestParam(defaultValue = "USD") String base,
+            @RequestParam(defaultValue = "INR") String target) {
+
+        log.info("GET /api/rates/test called base={} target={}", base, target);
+        RateFetchService.RateResult result = rateFetchService.getRateDetails(base, target);
+
+        Map<String, Object> response = Map.of(
+                "base", base.toUpperCase(),
+                "target", target.toUpperCase(),
+                "rate", result.rate(),
+                "source", result.source(),
+                "source_detail", "redis_cache_or_exchange_rate_api"
+        );
+
+        log.info("GET /api/rates/test response={}", response);
+        return ResponseEntity.ok(response);
     }
 }

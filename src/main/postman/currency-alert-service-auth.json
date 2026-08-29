@@ -7,6 +7,26 @@
   "item": [
     {
       "name": "Auth - Login Success",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const responseJson = pm.response.json();",
+              "if (responseJson && responseJson.token) {",
+              "  pm.collectionVariables.set(\"jwt_token\", responseJson.token);",
+              "  console.log(\"JWT saved to collection variable: \", responseJson.token);",
+              "} else {",
+              "  console.log(\"Login response did not include a token\");",
+              "}",
+              "pm.test(\"Status code is 200\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [
@@ -103,7 +123,7 @@
           }
         ],
         "url": {
-          "raw": "http://localhost:8081/api/rates",
+          "raw": "http://localhost:8081/api/rates?base=USD&target=INR",
           "protocol": "http",
           "host": [
             "localhost"
@@ -112,6 +132,53 @@
           "path": [
             "api",
             "rates"
+          ],
+          "query": [
+            {
+              "key": "base",
+              "value": "USD"
+            },
+            {
+              "key": "target",
+              "value": "INR"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Protected - Rates Test Fetch (Requires JWT)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/rates/test?base=USD&target=INR",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "rates",
+            "test"
+          ],
+          "query": [
+            {
+              "key": "base",
+              "value": "USD"
+            },
+            {
+              "key": "target",
+              "value": "INR"
+            }
           ]
         }
       },
@@ -121,7 +188,7 @@
   "variable": [
     {
       "key": "jwt_token",
-      "value": "PASTE_JWT_HERE",
+      "value": "",
       "type": "string"
     }
   ]
