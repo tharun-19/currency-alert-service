@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Currency Alert Service - JWT Auth",
+    "name": "Currency Alert Service ",
     "description": "Complete flow: Login → Create Alert → List Alerts → Get Rates (cached or fresh). All protected endpoints use JWT token captured from login.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
