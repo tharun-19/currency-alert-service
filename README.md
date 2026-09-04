@@ -202,23 +202,69 @@ Triggered alert for ruleId=... pair=USD/INR threshold=90.00 actualRate=95.5338 d
 
 ## Project Structure
 
+The project follows a layered, real-world package structure instead of keeping everything in one folder.
+
 ```
-src/main/java/com/tharun/currencyalertservice/
-├── CurrencyAlertServiceApplication.java    # Boot entry point
-├── config/                                 # Spring and Kafka config
-├── controller/                             # REST endpoints
-├── dto/                                    # request objects
-├── domain/                                 # JPA entities
-├── event/                                  # Kafka payloads
-├── external/                               # external API DTOs
-├── properties/                             # app configuration props
-├── repository/                             # database access
-├── security/                               # JWT auth/filter
-├── scheduler/                              # periodic tasks
-├── service/                                # business logic
-├── consumer/                               # Kafka listeners
-└── [other support classes]
+src/
+├── main/
+│   ├── java/com/tharun/currencyalertservice/
+│   │   ├── CurrencyAlertServiceApplication.java      # Boot entry point
+│   │   ├── config/                                    # Spring/Kafka/Redis configuration
+│   │   │   ├── SecurityConfig.java
+│   │   │   ├── RedisConfig.java
+│   │   │   ├── KafkaTopicConfig.java
+│   │   │   └── AlertTriggeredTopicConfig.java
+│   │   ├── controller/                                # REST API endpoints
+│   │   │   ├── AuthController.java
+│   │   │   ├── AlertController.java
+│   │   │   └── RateController.java
+│   │   ├── dto/                                       # request/response DTOs
+│   │   │   └── CreateAlertRequest.java
+│   │   ├── domain/                                    # JPA entities
+│   │   │   ├── AlertRule.java
+│   │   │   └── RateHistory.java
+│   │   ├── event/                                     # Kafka event payloads
+│   │   │   ├── RateFetchedEvent.java
+│   │   │   └── AlertTriggeredEvent.java
+│   │   ├── external/                                  # external API contract objects
+│   │   │   └── ExchangeRateResponse.java
+│   │   ├── properties/                                # custom config properties
+│   │   │   └── ExchangeRateProperties.java
+│   │   ├── repository/                                # persistence layer
+│   │   │   ├── AlertRuleRepository.java
+│   │   │   └── RateHistoryRepository.java
+│   │   ├── security/                                  # JWT auth and filters
+│   │   │   ├── JwtUtil.java
+│   │   │   └── JwtAuthenticationFilter.java
+│   │   ├── scheduler/                                 # scheduled jobs
+│   │   │   └── RateFetchScheduler.java
+│   │   ├── service/                                   # business logic
+│   │   │   └── RateFetchService.java
+│   │   └── consumer/                                  # Kafka consumers
+│   │       └── AlertEvaluatorConsumer.java
+│   └── resources/
+│       ├── application.yaml
+│       └── application-local.yaml
+│
+├── test/
+│   └── java/com/tharun/currencyalertservice/
+│       ├── AlertEvaluatorConsumerTest.java
+│       ├── CurrencyAlertServiceApplicationTests.java
+│       ├── ExchangeRateResponseTest.java
+│       ├── JwtAuthIntegrationTest.java
+│       ├── ProtectedEndpointTest.java
+│       └── RateFetchSchedulerTest.java
+│
+├── docker-compose.yml
+├── build.gradle
+├── settings.gradle
+├── gradlew
+├── .gitignore
+├── .env.example
+└── README.md
 ```
+
+This package split keeps the app easier to maintain, test, and extend as the project grows.
 
 ---
 
