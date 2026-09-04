@@ -203,17 +203,20 @@ Triggered alert for ruleId=... pair=USD/INR threshold=90.00 actualRate=95.5338 d
 ## Project Structure
 
 ```
-src/main/java/com/tharun/currency_alert_service/
+src/main/java/com/tharun/currencyalertservice/
 ├── CurrencyAlertServiceApplication.java    # Boot entry point
-├── AuthController.java                      # Login endpoint
-├── AlertController.java                     # Alert CRUD
-├── RateController.java                      # Exchange rate endpoints
-├── RateFetchService.java                    # Cache-aside + API fetch
-├── RateFetchScheduler.java                  # Scheduled rate publisher
-├── AlertEvaluatorConsumer.java              # Kafka consumer (breach logic)
-├── AlertRule.java                           # JPA entity for alerts
-├── RateHistory.java                         # JPA entity for rate audit
-├── SecurityConfig.java                      # JWT security config
+├── config/                                 # Spring and Kafka config
+├── controller/                             # REST endpoints
+├── dto/                                    # request objects
+├── domain/                                 # JPA entities
+├── event/                                  # Kafka payloads
+├── external/                               # external API DTOs
+├── properties/                             # app configuration props
+├── repository/                             # database access
+├── security/                               # JWT auth/filter
+├── scheduler/                              # periodic tasks
+├── service/                                # business logic
+├── consumer/                               # Kafka listeners
 └── [other support classes]
 ```
 
