@@ -264,7 +264,7 @@ src/
 └── README.md
 ```
 
-This package split keeps the app easier to maintain, test, and extend as the project grows.
+
 
 ---
 
